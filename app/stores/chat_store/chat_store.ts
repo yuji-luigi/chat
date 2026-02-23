@@ -1,11 +1,13 @@
 import { create } from "zustand";
 const initialStreamingMessage: ChatMessage = {
+  id: new Date().getTime().toString(),
   from: "assistant",
   content: "",
   file: null,
   timestamp: Date.now(),
 };
 const createEmptyStreamingMessage = (): ChatMessage => ({
+  id: new Date().getTime().toString(),
   from: "assistant",
   content: "",
   file: null,
@@ -20,6 +22,7 @@ type ChatState = {
   clearMessages: () => void;
 };
 type ChatMessage = {
+  id: string;
   from: "user" | "assistant";
   content: string;
   file: File | null;
@@ -37,6 +40,7 @@ export const useChatStore = create<ChatState>((set) => {
         const hasStreamingContent =
           state.streamingMessage.content.trim().length > 0;
         const newMessage: ChatMessage = {
+          id: "",
           from: "user",
           content: message,
           file: null,
