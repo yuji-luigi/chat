@@ -14,48 +14,33 @@ type Pages = {
   "/": {
     params: {};
   };
-  "/test": {
+  "/chat": {
     params: {};
-  };
-  "/test/:id": {
-    params: {
-      "id": string;
-    };
   };
 };
 
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/test" | "/test/:id";
+    page: "/" | "/chat";
   };
-  "./routes/_root_layout.tsx": {
-    id: "routes/_root_layout";
+  "routes/_index.tsx": {
+    id: "routes/_index";
     page: "/";
   };
-  "./routes/home.tsx": {
-    id: "routes/home";
-    page: "/";
+  "routes/chat.tsx": {
+    id: "routes/chat";
+    page: "/chat";
   };
-  "./routes/test/_layout.tsx": {
-    id: "routes/test/_layout";
-    page: "/test" | "/test/:id";
-  };
-  "./routes/test/test.tsx": {
-    id: "routes/test/test";
-    page: "/test" | "/test/:id";
-  };
-  "./routes/test/id.tsx": {
-    id: "routes/test/id";
-    page: "/test/:id";
+  "routes/chat._index.tsx": {
+    id: "routes/chat._index";
+    page: "/chat";
   };
 };
 
 type RouteModules = {
   "root": typeof import("./app/root.tsx");
-  "routes/_root_layout": typeof import("./app/./routes/_root_layout.tsx");
-  "routes/home": typeof import("./app/./routes/home.tsx");
-  "routes/test/_layout": typeof import("./app/./routes/test/_layout.tsx");
-  "routes/test/test": typeof import("./app/./routes/test/test.tsx");
-  "routes/test/id": typeof import("./app/./routes/test/id.tsx");
+  "routes/_index": typeof import("./app/routes/_index.tsx");
+  "routes/chat": typeof import("./app/routes/chat.tsx");
+  "routes/chat._index": typeof import("./app/routes/chat._index.tsx");
 };

@@ -11,6 +11,9 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --text-size-sm: 16px;
+  --text-size-md: 20px;
+  --text-size-lg: 24px;
 }
 
 a {
@@ -110,3 +113,10 @@ button:focus-visible {
 }
 
 
+.paragraph{
+  text-align: left;
+}
+.chat-messages{
+  margin-bottom: 10px;
+  font-size: var(--text-size-md);
+}

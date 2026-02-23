@@ -6,8 +6,17 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
-
 import type { Route } from "./+types/root";
+
+import appStylesHref from "@/styles/App.css?url";
+import chatStylesHref from "@/styles/chat.css?url";
+import indexStylesHref from "@/styles/index.css?url";
+
+export const links: Route.LinksFunction = () => [
+  { rel: "stylesheet", href: indexStylesHref },
+  { rel: "stylesheet", href: appStylesHref },
+  { rel: "stylesheet", href: chatStylesHref },
+];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -19,7 +28,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        <main className="app-root">{children}</main>
         <ScrollRestoration />
         <Scripts />
       </body>
