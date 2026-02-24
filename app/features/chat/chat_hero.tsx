@@ -8,13 +8,16 @@ export const ChatHero = () => {
     return <StreamingMessage />;
   }
   return (
-    <>
+    <div
+      className="chat-hero"
+      onAnimationEnd={() => console.log("animation ended")}
+    >
       <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
       </div>
       <h1>Type your message</h1>
-    </>
+    </div>
   );
 };

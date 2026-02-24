@@ -6,6 +6,16 @@
   text-align: center;
 }
 
+.chat-view:has(.reasoning-loader) {
+  & .chat-hero{
+    /* opacity: 0; */
+    transition: opacity 0.3s ease-in-out;
+    /* scale: 9 */
+  }
+}
+
+
+
 
 .chat-input-area {
   display: flex;

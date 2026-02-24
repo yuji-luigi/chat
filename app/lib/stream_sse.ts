@@ -1,7 +1,28 @@
+const sseEventTypes = [
+  "response.created",
+  "response.reasoning_summary_text.delta",
+  "response.reasoning_summary_text.done",
+  "response.reasoning_summary_part.done",
+  "response.output_text.delta",
+  "response.output_text.done",
+  "response.completed",
+  "response.failed",
+  "response.output_item.added",
+  "response.output_item.done",
+] as const;
+
+export type SSEEventType = (typeof sseEventTypes)[number];
+
+function isSSEEventType(eventType: unknown): eventType is SSEEventType {
+  if (typeof eventType !== "string") return false;
+  return sseEventTypes.includes(eventType);
+}
+export type SSEEvent = { type: SSEEventType; data: { delta?: string } };
+
 export async function stream_SSE(
   url: string,
   body: unknown,
-  onEvent: (ev: { event: string; data: { delta?: string } }) => void,
+  onEvent: (ev: SSEEvent) => void,
 ) {
   const res = await fetch(url, {
     method: "POST",
@@ -15,7 +36,7 @@ export async function stream_SSE(
   const decoder = new TextDecoder();
 
   let buffer = "";
-  let eventName = "message";
+  let eventName: unknown;
 
   while (true) {
     const { value, done } = await reader.read();
@@ -30,12 +51,13 @@ export async function stream_SSE(
       buffer = buffer.slice(idx + 2);
 
       // parse lines
-      eventName = "message";
       const dataLines: string[] = [];
 
-      for (const line of rawEvent.split("\n")) {
-        if (line.startsWith("event:")) eventName = line.slice(6).trim();
-        if (line.startsWith("data:")) dataLines.push(line.slice(5).trim());
+      const [eventLine, dataLine] = rawEvent.split("\n");
+      if (eventLine.startsWith("event:")) {
+        eventName = eventLine.slice(6).trim();
+        if (dataLine.startsWith("data:"))
+          dataLines.push(dataLine.slice(5).trim());
         // ignore ":" comments, id:, retry:
       }
 
@@ -43,10 +65,8 @@ export async function stream_SSE(
       // let data: { delta?: string } | undefined;
       try {
         const data = JSON.parse(dataStr) as { delta?: string };
-        if (data.delta) {
-          onEvent({ event: eventName, data });
-        } else {
-          throw new Error("No delta found");
+        if (isSSEEventType(eventName)) {
+          onEvent({ type: eventName, data });
         }
       } catch {
         console.error("Error parsing JSON:", dataStr);

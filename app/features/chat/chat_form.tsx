@@ -1,22 +1,31 @@
 import React from "react";
+import { stream_SSE } from "../../lib/stream_sse";
 import { api_endpoints } from "../../maps/api_endpoints";
 import { useChat } from "../../stores/chat_store/chat_store";
-import { stream_SSE } from "../../lib/stream_sse";
 
 export const ChatForm = () => {
-  const { setStreamingMessage, streamingMessage } = useChat();
+  const { setStreamingMessage, streamingMessage, sendMessage } = useChat();
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
+      sendMessage(e.currentTarget.message.value);
+      e.currentTarget.reset();
+      // setReasoningState({ status: "reasoning", summary: "" });
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
+      // setReasoningState({
+      //   status: "completed",
+      //   summary: "reasoning completed",
+      // });
+      return;
       const form = e.currentTarget;
       const formData = new FormData(form);
       const message = formData.get("message") as string;
       let chunkTexts = "";
       stream_SSE(api_endpoints.chat.openai.root, { message }, async (ev) => {
-        if (ev.event === "reasoning_summary_delta") {
+        if (ev.type === "reasoning_summary_delta") {
           console.log("...reasoning");
         }
-        if (ev.event === "text_delta") {
+        if (ev.type === "text_delta") {
           chunkTexts += ev.data?.delta;
 
           setStreamingMessage({
@@ -25,45 +34,6 @@ export const ChatForm = () => {
           });
         }
       });
-      return;
-      // const res = await fetch(api_endpoints.chat.openai.root, {
-      //   method: "POST",
-      //   body: JSON.stringify({ message }),
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     // Accept: "text/event-stream",
-      //   },
-      // });
-      // if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
-      // form.reset();
-      // const reader = res.body.getReader();
-      // const decoder = new TextDecoder();
-      // let chunkTexts = "";
-      // let messageId = "";
-      // while (true) {
-      //   const { value, done } = await reader.read();
-      //   if (done) break;
-      //   const chunk = decoder.decode(value, { stream: true });
-      //   try {
-      //     const json = JSON.parse(chunk);
-
-      //     if (json.type === "response.created") {
-      //       console.log("response.created");
-      //     }
-      //     if (json.id) {
-      //       messageId = json.id;
-      //     }
-      //     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      //   } catch (error: unknown) {
-      //     chunkTexts += chunk;
-      //   }
-      //   // setText(chunkTexts);
-      //   setStreamingMessage({
-      //     ...streamingMessage,
-      //     id: messageId,
-      //     content: streamingMessage.content + chunkTexts,
-      //   });
-      // }
     } catch (error) {
       console.error(error);
     }

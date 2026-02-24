@@ -6,7 +6,8 @@ import plusDark from "@/assets/icons/plus_dark.svg";
 import plusLight from "@/assets/icons/plus_light.svg";
 import moon from "@/assets/icons/moon.svg";
 import sun from "@/assets/icons/sun.svg";
-
+import thinkingLight from "@/assets/icons/think_light.svg";
+import thinkingDark from "@/assets/icons/think_dark.svg";
 export const svgIconMaps = {
   light: {
     image: imageLight,
@@ -14,6 +15,7 @@ export const svgIconMaps = {
     plus: plusLight,
     moon: moon,
     sun: sun,
+    thinking: thinkingLight,
   },
   dark: {
     image: imageDark,
@@ -21,5 +23,6 @@ export const svgIconMaps = {
     plus: plusDark,
     moon: moon,
     sun: sun,
+    thinking: thinkingDark,
   },
 };
