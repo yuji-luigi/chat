@@ -1,0 +1,69 @@
+/* System theme
+copied from https://github.com/syntaxfm/website/blob/main/src/styles/themes/dark.css
+just for reference and edit for real use
+*/
+.theme-system {
+  --bg-sheet: var(--white);
+  --bg: var(--black);
+  --fg: var(--white);
+  --fg-sheet: var(--black);
+  --primary: var(--yellow);
+  --accent: var(--teal);
+  --warning: var(--red);
+  --bg-grit: var(--bg-grit-light);
+
+  @media (prefers-color-scheme: dark) {
+    --fg-sheet: var(--white);
+    --bg-sheet: var(--black);
+    --primary: var(--yellow);
+    --accent: var(--teal);
+    --subtle-accent: var(--yellow-1);
+    --warning: var(--red);
+    --bg-2: var(--black);
+    --bg-1: var(--black);
+    --bg: var(--black);
+    --fg-1: var(--white);
+    --fg-2: var(--black-3);
+    --border: solid var(--border-size) var(--fg-sheet);
+    --spa-ran-wrap-bg: var(--black);
+    --bg-grit: var(--bg-grit-dark);
+
+    .border-on-dark {
+      border: var(--border);
+    }
+  }
+}
+
+/* Same as prefers color scheme dark */
+.theme-dark {
+  --fg-sheet: var(--white);
+  --bg-sheet: var(--black);
+  --primary: var(--yellow);
+  --accent: var(--teal);
+  --subtle-accent: var(--yellow-1);
+  --warning: var(--red);
+  --bg-2: var(--black-8);
+  --bg-1: var(--black);
+  --bg: var(--black);
+  --fg-1: var(--white);
+  --fg-2: var(--black-3);
+  --border-color: var(--bg-sheet);
+  --border: solid var(--border-size) var(--fg-sheet);
+  --spa-ran-wrap-bg: var(--black);
+  --bg-grit: var(--bg-grit-dark);
+
+  .border-on-dark {
+    border: var(--border);
+  }
+}
+
+.theme-light {
+  --bg-sheet: var(--white);
+  --bg: var(--black);
+  --fg: var(--white);
+  --fg-sheet: var(--black);
+  --primary: var(--yellow);
+  --accent: var(--teal);
+  --warning: var(--red);
+  --bg-grit: var(--bg-grit-light);
+}

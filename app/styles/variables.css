@@ -1,0 +1,12 @@
+:root {
+  color-scheme: light dark;
+  --app-text: rgba(255, 255, 255, 0.87);
+  --app-bg: #242424;
+  --thinking-shimmer-0: rgba(255, 255, 255, 0.25);
+  --thinking-shimmer-50: rgba(255, 255, 255, 0.75);
+  --thinking-shimmer-100: rgba(255, 255, 255, 0.25);
+
+  --text-size-sm: 16px;
+  --text-size-md: 20px;
+  --text-size-lg: 24px;
+}

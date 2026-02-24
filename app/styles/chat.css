@@ -7,15 +7,12 @@
 }
 
 .chat-view:has(.reasoning-loader) {
-  & .chat-hero{
+  & .chat-hero {
     /* opacity: 0; */
     transition: opacity 0.3s ease-in-out;
     /* scale: 9 */
   }
 }
-
-
-
 
 .chat-input-area {
   display: flex;
@@ -29,7 +26,7 @@
   max-width: 600px;
   margin: 0 auto;
 }
-.chat-text-input{
+.chat-text-input {
   width: 100%;
   border: none;
   background: transparent;
@@ -40,7 +37,7 @@
     outline: none;
   }
 }
-.chat-input-toolbar{
+.chat-input-toolbar {
   display: flex;
   flex-direction: row;
   gap: 10px;
@@ -52,9 +49,13 @@
   & .chat-text-input {
     border: none;
     background: transparent;
-   }
-   
-   
+  }
 }
 
-
+.reasoning-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  margin-right: auto;
+}
