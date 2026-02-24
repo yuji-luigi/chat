@@ -50,7 +50,7 @@ export const ChatForm = () => {
         ></input>
         <div className="chat-input-toolbar">
           {/* <button className="icon-button sm" type="submit">
-            <img src={svgIconMaps.light.plus} alt="plus" />
+            <img src={svg_icon_maps.light.plus} alt="plus" />
           </button> */}
           <button className="chat-send-button" type="submit">
             Send

@@ -1,6 +1,6 @@
 import React from "react";
 import { useChat } from "../../stores/chat_store/chat_store";
-import { svgIconMaps } from "../../maps/svg_icon_maps";
+import { svg_icon_maps } from "../../maps/svg_icon_maps";
 
 export const ChatMessages = () => {
   const { messages, reasoningState, streamingMessage } = useChat();
@@ -15,7 +15,7 @@ export const ChatMessages = () => {
               <span className="thinking-text">Thinking...</span>
               <img
                 className="icon-lg expanding-animation"
-                src={svgIconMaps.light.thinking}
+                src={svg_icon_maps.light.thinking}
                 alt="thinking"
               />
             </p>

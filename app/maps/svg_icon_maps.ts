@@ -8,7 +8,7 @@ import moon from "@/assets/icons/moon.svg";
 import sun from "@/assets/icons/sun.svg";
 import thinkingLight from "@/assets/icons/think_light.svg";
 import thinkingDark from "@/assets/icons/think_dark.svg";
-export const svgIconMaps = {
+export const svg_icon_maps = {
   light: {
     image: imageLight,
     send: sendLight,
