@@ -28,7 +28,7 @@ export const svg_icon_maps = {
     plus: SvgPlusLight,
     moon: SvgMoon,
     sun: SvgSun,
-    thinking: SvgThinkingLight,
+    reasoning: SvgThinkingLight,
   },
   dark: {
     image: SvgImageDark,
@@ -36,6 +36,6 @@ export const svg_icon_maps = {
     plus: SvgPlusDark,
     moon: SvgMoon,
     sun: SvgSun,
-    thinking: SvgThinkingDark,
+    reasoning: SvgThinkingDark,
   },
 };

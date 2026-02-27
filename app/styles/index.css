@@ -3,14 +3,13 @@
 @import "./variables.css";
 @import "./base.css";
 /* @import "./light-dark.css"; */
-/* @import "./utility.css"; */
+@import "./utility.css";
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color-scheme: light dark;
-
   color: var(--app-text);
   background-color: var(--app-bg);
   font-synthesis: none;
@@ -64,9 +63,9 @@ button:focus-visible {
   :root {
     --app-text: #213547;
     --app-bg: #ffffff;
-    --thinking-shimmer-0: rgba(0, 0, 0, 0.3);
-    --thinking-shimmer-50: rgba(0, 0, 0, 0.8);
-    --thinking-shimmer-100: rgba(0, 0, 0, 0.3);
+    --reasoning-shimmer-0: rgba(0, 0, 0, 0.3);
+    --reasoning-shimmer-50: rgba(0, 0, 0, 0.8);
+    --reasoning-shimmer-100: rgba(0, 0, 0, 0.3);
   }
   a:hover {
     color: #747bff;
@@ -135,9 +134,10 @@ button:focus-visible {
 .paragraph {
   text-align: left;
 }
+
 .chat-messages {
-  margin-bottom: 10px;
-  font-size: var(--text-size-md);
+  text-align: left;
+  font-size: var(--font-size-md);
 }
 
 .icon-sm {
@@ -156,38 +156,39 @@ button:focus-visible {
 .expanding-animation {
   animation: expanding-animation 1s linear infinite;
 }
-.thinking-text {
-  font-size: var(--text-size-md);
+
+.wave-text[data-active="true"] {
+  font-size: var(--font-size-md);
   font-weight: 500;
   display: inline-block;
   color: transparent;
   -webkit-text-fill-color: transparent;
   background-image: linear-gradient(
     90deg,
-    var(--thinking-shimmer-0) 0%,
-    var(--thinking-shimmer-50) 50%,
-    var(--thinking-shimmer-100) 100%
+    var(--reasoning-shimmer-0) 0%,
+    var(--reasoning-shimmer-50) 50%,
+    var(--reasoning-shimmer-100) 100%
   );
   background-size: 220% 100%;
   background-position: 100% 0;
   -webkit-background-clip: text;
   background-clip: text;
-  animation: thinking-shimmer 1s linear infinite;
+  animation: reasoning-shimmer 1s linear infinite;
 }
 
 @keyframes fill-color-change {
   0% {
-    fill: var(--thinking-shimmer-0);
+    fill: var(--reasoning-shimmer-0);
   }
 
   50% {
-    fill: var(--thinking-shimmer-50);
+    fill: var(--reasoning-shimmer-50);
   }
   100% {
-    fill: var(--thinking-shimmer-100);
+    fill: var(--reasoning-shimmer-100);
   }
 }
-.thinking-icon {
+.reasoning-icon {
   path {
     animation: fill-color-change 1.5s ease-in-out infinite;
   }
@@ -205,11 +206,29 @@ button:focus-visible {
   }
 }
 
-@keyframes thinking-shimmer {
+@keyframes reasoning-shimmer {
   0% {
     background-position: 100% 0;
   }
   100% {
     background-position: -120% 0;
+  }
+}
+
+
+button.no-style {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:active{
+    border: none;
+  }
+  &:focus{
+    outline: none;
   }
 }

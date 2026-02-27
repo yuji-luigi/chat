@@ -4,7 +4,7 @@
   }
   html {
     box-sizing: border-box;
-    text-size-adjust: none;
+    font-size-adjust: none;
     font-family: "💪";
     /* default vite settings */
     background-color: var(--app-bg);
@@ -20,6 +20,7 @@
   *::before,
   *::after {
     box-sizing: inherit;
+    margin:0;
   }
   @font-face {
     font-family: "💪";

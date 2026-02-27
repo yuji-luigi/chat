@@ -2,6 +2,7 @@ const sseEventTypes = [
   "response.created",
   "response.reasoning_summary_text.delta",
   "response.reasoning_summary_text.done",
+  "response.reasoning_summary_part.added",
   "response.reasoning_summary_part.done",
   "response.output_text.delta",
   "response.output_text.done",

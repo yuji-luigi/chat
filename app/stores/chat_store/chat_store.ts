@@ -13,17 +13,19 @@ type ChatMessage = {
 type ReasoningState = {
   status: "idle" | "reasoning" | "completed";
   summary: string;
-  delta: string;
+  description: string;
 };
 
 type ChatState = {
   messages: ChatMessage[];
   streamingMessage: ChatMessage;
   sendMessage: (message: string) => Promise<void>;
-  setStreamingMessage: (message: ChatMessage) => void;
   clearMessages: () => void;
   reasoningStates: ReasoningState[];
-  setReasoningState: (state: ReasoningState) => void;
+  setReasoningState: (cb: (state: ReasoningState) => ReasoningState) => void;
+  setReasoningStates: (
+    cb: (state: ReasoningState[]) => ReasoningState[],
+  ) => void;
 };
 
 const createId = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -41,12 +43,20 @@ export const useChatStore = create<ChatState>((set, get) => {
     messages: [],
     streamingMessage: createEmptyStreamingMessage(),
     reasoningStates: [],
-    setStreamingMessage: (message: ChatMessage) =>
-      set({ streamingMessage: message }),
-    setReasoningState: (state: ReasoningState) =>
-      set({ reasoningStates: [...get().reasoningStates, state] }),
+    setReasoningState: (cb: (state: ReasoningState) => ReasoningState) =>
+      set((state) => ({
+        reasoningStates: [
+          ...state.reasoningStates,
+          cb(state.reasoningStates[state.reasoningStates.length - 1]),
+        ],
+      })),
+    // for testing
+    setReasoningStates: (cb: (state: ReasoningState[]) => ReasoningState[]) =>
+      set((state) => ({
+        reasoningStates: cb(state.reasoningStates),
+      })),
     sendMessage: async (message: string) => {
-      const newMessage: ChatMessage = {
+      const myNewMessage: ChatMessage = {
         id: createId(),
         from: "user",
         content: message,
@@ -61,14 +71,15 @@ export const useChatStore = create<ChatState>((set, get) => {
           {
             status: "idle",
             summary: "",
-            delta: "",
+            description: "",
           },
         ],
       });
-
+      set((state) => ({
+        messages: [...state.messages, myNewMessage],
+      }));
       await send_message_to_server(message, (event: SSEEvent) => {
-        if (event.type === "response.reasoning_summary_text.delta") {
-          // progressively append reasoning text so UI can update
+        if (event.type === "response.reasoning_summary_part.added") {
           set((state) => ({
             reasoningStates: [
               ...state.reasoningStates,
@@ -77,7 +88,22 @@ export const useChatStore = create<ChatState>((set, get) => {
                 summary:
                   state.reasoningStates[state.reasoningStates.length - 1]
                     .summary + (event.data?.delta ?? ""),
-                delta: event.data?.delta ?? "",
+                description: event.data?.delta ?? "",
+              },
+            ],
+          }));
+        }
+        if (event.type === "response.reasoning_summary_text.delta") {
+          // progressively append reasoning text so UI can update
+          set((state) => ({
+            reasoningStates: [
+              // ...state.reasoningStates,
+              {
+                status: "reasoning",
+                summary:
+                  state.reasoningStates[state.reasoningStates.length - 1]
+                    .summary + (event.data?.delta ?? ""),
+                description: event.data?.delta ?? "",
               },
             ],
           }));
@@ -85,36 +111,23 @@ export const useChatStore = create<ChatState>((set, get) => {
 
         if (event.type === "response.reasoning_summary_text.done") {
           console.log("one reasoning summary text is done");
+          const newReasoningStates = get().reasoningStates.map(
+            (state, index) => {
+              if (index === get().reasoningStates.length - 1) {
+                return {
+                  ...state,
+                  status: "completed",
+                } as ReasoningState;
+              }
+              return state;
+            },
+          );
           // mark reasoning as completed
-          set((state) => ({
-            reasoningStates: [
-              ...state.reasoningStates,
-              {
-                status: "completed",
-                summary:
-                  state.reasoningStates[state.reasoningStates.length - 1]
-                    .summary,
-                delta: "",
-              },
-            ],
+          set(() => ({
+            reasoningStates: newReasoningStates,
           }));
         }
         if (event.type === "response.output_text.delta") {
-          console.log("reasoning completed. generating answer...");
-          console.log("output_text.delta\n", event.data?.delta);
-          set((state) => ({
-            reasoningStates: [
-              ...state.reasoningStates,
-              {
-                status: "completed",
-                summary:
-                  state.reasoningStates[state.reasoningStates.length - 1]
-                    .summary,
-                delta: "",
-              },
-            ],
-          }));
-
           set((state) => ({
             streamingMessage: {
               ...state.streamingMessage,
@@ -127,14 +140,12 @@ export const useChatStore = create<ChatState>((set, get) => {
           // no-op for now; streamingMessage has no "status" field
         }
         if (event.type === "response.completed") {
-          set((state) => ({
-            reasoningStates: [...state.reasoningStates],
-          }));
+          console.log("response completed");
         }
       });
 
       set((state) => ({
-        messages: [...state.messages, state.streamingMessage, newMessage],
+        messages: [...state.messages, state.streamingMessage],
         streamingMessage: createEmptyStreamingMessage(),
       }));
     },
