@@ -1,13 +1,24 @@
 import { useState } from "react";
+import { Loader } from "../../../components/loader";
 import { SvgThinkingDark } from "../../../maps/svg_icon_maps";
 import { useChat } from "../../../stores/chat_store/chat_store";
 
 export const ReasoningSection = () => {
-  const { reasoningStates } = useChat();
+  const { reasoningStates, isSendingMessage } = useChat();
   const [isReasoningDetailsOpen, setIsReasoningDetailsOpen] = useState(false);
   function openReasoningDetails() {
     setIsReasoningDetailsOpen((isOpen) => !isOpen);
   }
+
+  if (isSendingMessage) {
+    return (
+      <div className="loading-container">
+        <p className="paragraph chat-messages">loading...</p>
+        <Loader classNames="icon-lg" />
+      </div>
+    );
+  }
+
   if (
     reasoningStates.length == 0 ||
     reasoningStates[reasoningStates.length - 1].status !== "reasoning"
@@ -24,7 +35,7 @@ export const ReasoningSection = () => {
           <span data-active="true" className="wave-text">
             thinking...
           </span>
-          <SvgThinkingDark className="icon-lg reasoning-icon expanding-animation" />
+          <SvgThinkingDark className="icon-lg reasoning-icon expanding-item" />
         </button>
       </div>
       {isReasoningDetailsOpen && (

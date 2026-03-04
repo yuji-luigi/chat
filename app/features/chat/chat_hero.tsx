@@ -1,16 +1,15 @@
 import { useChat } from "../../stores/chat_store/chat_store";
-import { StreamingMessage } from "./StreamingMessage";
 import viteLogo from "/vite.svg";
 
 export const ChatHero = () => {
-  const { streamingMessage } = useChat();
-  if (streamingMessage.content.length > 0) {
-    return <StreamingMessage />;
-  }
+  const { messages } = useChat();
   return (
     <div
       className="chat-hero"
-      onAnimationEnd={() => console.log("animation ended")}
+      data-has-messages={messages.length > 0}
+      onAnimationEnd={(e) =>
+        e.currentTarget.setAttribute("data-animation-end", "true")
+      }
     >
       <div>
         <a href="https://vite.dev" target="_blank">

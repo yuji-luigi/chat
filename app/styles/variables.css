@@ -11,4 +11,6 @@
   --font-size-sm: 16px;
   --font-size-md: 20px;
   --font-size-lg: 24px;
+
+  --max-width: 1280px;
 }

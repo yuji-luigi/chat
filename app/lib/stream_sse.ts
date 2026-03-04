@@ -10,15 +10,27 @@ const sseEventTypes = [
   "response.failed",
   "response.output_item.added",
   "response.output_item.done",
+  "assistant.phase",
+  "assistant.emotion",
 ] as const;
 
 export type SSEEventType = (typeof sseEventTypes)[number];
+export type AssistantPhase = "idle" | "reasoning" | "speaking" | "done";
+export type AssistantEmotion = "neutral" | "thinking" | "happy" | "surprised";
 
 function isSSEEventType(eventType: unknown): eventType is SSEEventType {
   if (typeof eventType !== "string") return false;
   return sseEventTypes.includes(eventType);
 }
-export type SSEEvent = { type: SSEEventType; data: { delta?: string } };
+export type SSEEventData = {
+  delta?: string;
+  phase?: AssistantPhase;
+  emotion?: AssistantEmotion;
+  intensity?: number;
+  [key: string]: unknown;
+};
+
+export type SSEEvent = { type: SSEEventType; data: SSEEventData };
 
 export async function stream_SSE(
   url: string,
@@ -53,19 +65,19 @@ export async function stream_SSE(
 
       // parse lines
       const dataLines: string[] = [];
-
-      const [eventLine, dataLine] = rawEvent.split("\n");
-      if (eventLine.startsWith("event:")) {
-        eventName = eventLine.slice(6).trim();
-        if (dataLine.startsWith("data:"))
-          dataLines.push(dataLine.slice(5).trim());
-        // ignore ":" comments, id:, retry:
+      for (const line of rawEvent.split("\n")) {
+        if (line.startsWith("event:")) {
+          eventName = line.slice(6).trim();
+          continue;
+        }
+        if (line.startsWith("data:")) {
+          dataLines.push(line.slice(5).trim());
+        }
       }
 
       const dataStr = dataLines.join("\n");
-      // let data: { delta?: string } | undefined;
       try {
-        const data = JSON.parse(dataStr) as { delta?: string };
+        const data = JSON.parse(dataStr) as SSEEventData;
         if (isSSEEventType(eventName)) {
           onEvent({ type: eventName, data });
         }

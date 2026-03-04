@@ -16,12 +16,21 @@ type ReasoningState = {
   description: string;
 };
 
+type AvatarState = {
+  phase: "idle" | "reasoning" | "speaking" | "done";
+  emotion: "neutral" | "thinking" | "happy" | "surprised";
+  intensity: number;
+};
+
 type ChatState = {
+  /** true until we get the streaming res from api. */
+  isSendingMessage: boolean;
   messages: ChatMessage[];
   streamingMessage: ChatMessage;
   sendMessage: (message: string) => Promise<void>;
   clearMessages: () => void;
   reasoningStates: ReasoningState[];
+  avatarState: AvatarState;
   setReasoningState: (cb: (state: ReasoningState) => ReasoningState) => void;
   setReasoningStates: (
     cb: (state: ReasoningState[]) => ReasoningState[],
@@ -41,8 +50,14 @@ const createEmptyStreamingMessage = (): ChatMessage => ({
 export const useChatStore = create<ChatState>((set, get) => {
   return {
     messages: [],
+    isSendingMessage: false,
     streamingMessage: createEmptyStreamingMessage(),
     reasoningStates: [],
+    avatarState: {
+      phase: "idle",
+      emotion: "neutral",
+      intensity: 0,
+    },
     setReasoningState: (cb: (state: ReasoningState) => ReasoningState) =>
       set((state) => ({
         reasoningStates: [
@@ -56,6 +71,7 @@ export const useChatStore = create<ChatState>((set, get) => {
         reasoningStates: cb(state.reasoningStates),
       })),
     sendMessage: async (message: string) => {
+      set({ isSendingMessage: true });
       const myNewMessage: ChatMessage = {
         id: createId(),
         from: "user",
@@ -74,12 +90,20 @@ export const useChatStore = create<ChatState>((set, get) => {
             description: "",
           },
         ],
+        avatarState: {
+          phase: "idle",
+          emotion: "neutral",
+          intensity: 0,
+        },
       });
       set((state) => ({
         messages: [...state.messages, myNewMessage],
       }));
       await send_message_to_server(message, (event: SSEEvent) => {
         if (event.type === "response.reasoning_summary_part.added") {
+          set((state) => ({
+            isSendingMessage: false,
+          }));
           set((state) => ({
             reasoningStates: [
               ...state.reasoningStates,
@@ -127,6 +151,32 @@ export const useChatStore = create<ChatState>((set, get) => {
             reasoningStates: newReasoningStates,
           }));
         }
+        if (event.type === "assistant.phase") {
+          set((state) => ({
+            avatarState: {
+              ...state.avatarState,
+              phase:
+                typeof event.data.phase === "string"
+                  ? event.data.phase
+                  : state.avatarState.phase,
+            },
+          }));
+        }
+        if (event.type === "assistant.emotion") {
+          set((state) => ({
+            avatarState: {
+              ...state.avatarState,
+              emotion:
+                typeof event.data.emotion === "string"
+                  ? event.data.emotion
+                  : state.avatarState.emotion,
+              intensity:
+                typeof event.data.intensity === "number"
+                  ? event.data.intensity
+                  : state.avatarState.intensity,
+            },
+          }));
+        }
         if (event.type === "response.output_text.delta") {
           set((state) => ({
             streamingMessage: {
@@ -137,7 +187,15 @@ export const useChatStore = create<ChatState>((set, get) => {
           }));
         }
         if (event.type === "response.output_text.done") {
-          // no-op for now; streamingMessage has no "status" field
+          set((state) => ({
+            streamingMessage: {
+              ...state.streamingMessage,
+              content:
+                typeof event.data.delta === "string"
+                  ? event.data.delta
+                  : state.streamingMessage.content,
+            },
+          }));
         }
         if (event.type === "response.completed") {
           console.log("response completed");
@@ -145,6 +203,7 @@ export const useChatStore = create<ChatState>((set, get) => {
       });
 
       set((state) => ({
+        isSendingMessage: false,
         messages: [...state.messages, state.streamingMessage],
         streamingMessage: createEmptyStreamingMessage(),
       }));

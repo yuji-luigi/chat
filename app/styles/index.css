@@ -2,6 +2,7 @@
 
 @import "./variables.css";
 @import "./base.css";
+@import "./components.css";
 /* @import "./light-dark.css"; */
 @import "./utility.css";
 
@@ -140,20 +141,8 @@ button:focus-visible {
   font-size: var(--font-size-md);
 }
 
-.icon-sm {
-  width: 16px;
-  height: 16px;
-}
-.icon-md {
-  width: 24px;
-  height: 24px;
-}
-.icon-lg {
-  width: 32px;
-  height: 32px;
-}
 
-.expanding-animation {
+.expanding-item {
   animation: expanding-animation 1s linear infinite;
 }
 
@@ -230,5 +219,18 @@ button.no-style {
   }
   &:focus{
     outline: none;
+  }
+}
+
+.spinning-item {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }

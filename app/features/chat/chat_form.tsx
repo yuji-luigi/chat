@@ -2,7 +2,7 @@ import React from "react";
 import { useChat } from "../../stores/chat_store/chat_store";
 
 export const ChatForm = () => {
-  const { sendMessage } = useChat();
+  const { sendMessage, messages } = useChat();
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
@@ -15,7 +15,11 @@ export const ChatForm = () => {
     }
   };
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      data-has-messages={messages.length > 0}
+      className="chat-form"
+      onSubmit={handleSubmit}
+    >
       <div className="chat-input-area">
         <input
           maxLength={100}

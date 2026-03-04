@@ -8,6 +8,7 @@ import SvgMoon from "@/assets/icons/moon.svg?react";
 import SvgSun from "@/assets/icons/sun.svg?react";
 import SvgThinkingLight from "@/assets/icons/think_light.svg?react";
 import SvgThinkingDark from "@/assets/icons/think_dark.svg?react";
+import SvgLoading from "@/assets/icons/loading.svg?react";
 
 export {
   SvgImageDark,
@@ -20,6 +21,7 @@ export {
   SvgSun,
   SvgThinkingLight,
   SvgThinkingDark,
+  SvgLoading,
 };
 export const svg_icon_maps = {
   light: {
@@ -29,6 +31,7 @@ export const svg_icon_maps = {
     moon: SvgMoon,
     sun: SvgSun,
     reasoning: SvgThinkingLight,
+    loading: SvgLoading,
   },
   dark: {
     image: SvgImageDark,
@@ -37,5 +40,6 @@ export const svg_icon_maps = {
     moon: SvgMoon,
     sun: SvgSun,
     reasoning: SvgThinkingDark,
+    loading: SvgLoading,
   },
 };
