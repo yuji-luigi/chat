@@ -1,3 +1,5 @@
+import type { ChatMessage } from "../stores/chat_store/chat_store";
+
 const sseEventTypes = [
   "response.created",
   "response.reasoning_summary_text.delta",
@@ -20,7 +22,7 @@ export type AssistantEmotion = "neutral" | "thinking" | "happy" | "surprised";
 
 function isSSEEventType(eventType: unknown): eventType is SSEEventType {
   if (typeof eventType !== "string") return false;
-  return sseEventTypes.includes(eventType);
+  return sseEventTypes.includes(eventType as SSEEventType);
 }
 export type SSEEventData = {
   delta?: string;
@@ -34,13 +36,16 @@ export type SSEEvent = { type: SSEEventType; data: SSEEventData };
 
 export async function stream_SSE(
   url: string,
-  body: unknown,
+  { chatMessage }: { chatMessage: ChatMessage },
   onEvent: (ev: SSEEvent) => void,
 ) {
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    body: JSON.stringify({
+      content: chatMessage.content,
+      parent_message_id: chatMessage.parent_message_id,
+    }),
   });
 
   if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);

@@ -66,6 +66,9 @@
   padding: 10px;
   font-size: 18px;
   border-radius: 8px;
+  resize: none;
+  max-height: 150px;
+
   &:focus {
     outline: none;
   }

@@ -21,13 +21,24 @@ export const ChatForm = () => {
       onSubmit={handleSubmit}
     >
       <div className="chat-input-area">
-        <input
-          maxLength={100}
-          max={100}
+        <textarea
           className="chat-text-input"
           name="message"
           id="message-input"
-        ></input>
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              // invoke the submit event
+              e.preventDefault();
+              e.currentTarget.form?.requestSubmit();
+              return false;
+            }
+            if (e.key === "Enter" && e.shiftKey) {
+              e.currentTarget.style.height = "auto";
+              e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
+              return false;
+            }
+          }}
+        ></textarea>
         <div className="chat-input-toolbar">
           {/* <button className="icon-button sm" type="submit">
             <img src={svg_icon_maps.light.plus} alt="plus" />
